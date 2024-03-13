@@ -44,7 +44,7 @@ For each node that should be joined, one need to execute ~pvecm add <hostname>~.
 The ~<hostname>~ variable is the IP address of a node already in the cluster, e.g. node the cluster was created on.
 This IP is defined under *pvenode_primary* in the /inventory/ file.
 
-Oneliner to SSH /and/ interactively add the node:
+One-liner to SSH /and/ interactively add the node:
 #+BEGIN_SRC sh
 ssh -t root@IP_ADDRESS_OF_NODE_TO_ADD "pvecm add <ip-address-of-primary-node>"
 #+END_SRC
@@ -60,10 +60,10 @@ ssh -t root@192.168.1.102 "pvecm add 192.168.1.101"
 These steps details how to create an Ansible user on the PVE nodes and configure authentication for it to manage Ansible tasks on the nodes.
 
 1. Validate node connections with Ping package:
-    #+BEGIN_SRC sh
-    ansible pvenodes -i inventory -m ping --user=root -k
-    #+END_SRC
-    The expected result is a "pong" response from /each/ Proxmox node.
+#+BEGIN_SRC sh
+ansible pvenodes -i inventory -m ping --user=root -k
+#+END_SRC
+The expected result is a "pong" response from /each/ Proxmox node.
 2. Create an Ansible SSH key
     #+BEGIN_SRC sh
     ssh-keygen -t ed25519 -a 100 -f ~/.ssh/ansible_homelab -q -N ''
