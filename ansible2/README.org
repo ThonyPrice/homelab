@@ -59,25 +59,32 @@ ssh -t root@192.168.1.102 "pvecm add 192.168.1.101"
 
 These steps details how to create an Ansible user on the PVE nodes and configure authentication for it to manage Ansible tasks on the nodes.
 
-1. Validate node connections with Ping package:
-        #+BEGIN_SRC sh
-        ansible pvenodes -i inventory -m ping --user=root -k
-        #+END_SRC
-    The expected result is a "pong" response from /each/ Proxmox node.
-2. Create an Ansible SSH key
-    #+BEGIN_SRC sh
-    ssh-keygen -t ed25519 -a 100 -f ~/.ssh/ansible_homelab -q -N ''
-    #+END_SRC
-3. Replace the Ansible SSH key in ~pve_onboard.yml~ with the output of:
-    #+BEGIN_SRC sh
-    cat ~/.ssh/ansible_homelab.pub
-    #+END_SRC
-4. Run the /pve_onboard/ playbook to create and configure the Ansible on the pvenodes:
-    #+BEGIN_SRC sh
-    ansible-playbook pve_onboard.yml -i inventory --user=root -
-    #+END_SRC
-5. Validate the SSH key connection with:
-    #+BEGIN_SRC sh
-    ansible pvenodes -m ping -i inventory --user=ansible  --private-key ~/.ssh/ansible-key
-    #+END_SRC
-    again, expect one "pong" from each node.
+Validate node connections with Ping package:
+#+BEGIN_SRC sh
+ansible pvenodes -i inventory -m ping --user=root -k
+#+END_SRC
+The expected result is a "pong" response from /each/ Proxmox node.
+
+Create an Ansible SSH key
+#+BEGIN_SRC sh
+ssh-keygen -t ed25519 -a 100 -f ~/.ssh/ansible_homelab -q -N ''
+#+END_SRC
+
+Replace the Ansible SSH key in ~pve_onboard.yml~ with the output of:
+#+BEGIN_SRC sh
+cat ~/.ssh/ansible_homelab.pub
+#+END_SRC
+
+Run the /pve_onboard/ playbook to create and configure the Ansible on the pvenodes:
+#+BEGIN_SRC sh
+ansible-playbook pve_onboard.yml -i inventory --user=root -
+#+END_SRC
+
+Validate the SSH key connection with:
+#+BEGIN_SRC sh
+ansible pvenodes -m ping -i inventory --user=ansible  --private-key ~/.ssh/ansible-key
+#+END_SRC
+again, expect one "pong" from each node.
+
+That's it.
+Now, we are able to use the Ansible user to manage all tasks in the other playbooks!
