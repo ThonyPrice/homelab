@@ -1,0 +1,83 @@
+#+title: Bootstrap
+
+This document details the tasks to bootstrap Proxmox cluster.
+These tasks do include a few manual steps which is why they are documented separate from the other tasks.
+Do read carefully and remember to update any variable required for you environment.
+
+
+* Prerequisites
+
+*Developer machine*
+- ansible, and
+- sshpass
+
+I use nix as my package manager, to resolve a shell with these dependencied installed:
+#+BEGIN_SRC sh
+nix-shell -p ansible sshpass
+#+END_SRC
+
+*Proxmox Nodes*
+- Nodes with Proxmox installed
+- Node IPs set in the /inventory/ file!
+
+
+* Create Proxmox Cluster and Join All Nodes
+
+To utilize the Proxmox cluster feature we need to accomplish two tasks;
+1. Create a Proxmox cluster on /one/ node, and
+3. Add /all/ remaining nodes to the cluster.
+
+** Create the Cluster
+
+The task may be carried out with the /pve_cluster.yml/ playbook:
+
+#+BEGIN_SRC sh
+ansible-playbook pve_cluster.yml -i inventory --user=root -k
+#+END_SRC
+
+** Add Nodes to the Cluster
+
+this will initalize the cluster with one node, the IP address defined under *pvenodes_primary* in the /inventory/.
+
+Unfortunately, this process is interactive and not possible to automate with Ansible.
+For each node that should be joined, one need to execute ~pvecm add <hostname>~.
+The ~<hostname>~ variable is the IP address of a node already in the cluster, e.g. node the cluster was created on.
+This IP is defined under *pvenode_primary* in the /inventory/ file.
+
+Oneliner to SSH /and/ interactively add the node:
+#+BEGIN_SRC sh
+ssh -t root@IP_ADDRESS_OF_NODE_TO_ADD "pvecm add <ip-address-of-primary-node>"
+#+END_SRC
+
+in my current two node setup, that would be:
+#+BEGIN_SRC sh
+ssh -t root@192.168.1.102 "pvecm add 192.168.1.101"
+#+END_SRC
+
+
+* Prepare Proxmox Cluster for Ansible Management
+
+These steps details how to create an Ansible user on the PVE nodes and configure authentication for it to manage Ansible tasks on the nodes.
+
+1. Validate node connections with Ping package:
+    #+BEGIN_SRC sh
+    ansible pvenodes -i inventory -m ping --user=root -k
+    #+END_SRC
+    The expected result is a "pong" response from /each/ Proxmox node.
+2. Create an Ansible SSH key
+    #+BEGIN_SRC sh
+    ssh-keygen -t ed25519 -a 100 -f ~/.ssh/ansible_homelab -q -N ''
+    #+END_SRC
+3. Replace the Ansible SSH key in ~pve_onboard.yml~ with the output of:
+    #+BEGIN_SRC sh
+    cat ~/.ssh/ansible_homelab.pub
+    #+END_SRC
+4. Run the /pve_onboard/ playbook to create and configure the Ansible on the pvenodes:
+    #+BEGIN_SRC sh
+    ansible-playbook pve_onboard.yml -i inventory --user=root -
+    #+END_SRC
+5. Validate the SSH key connection with:
+    #+BEGIN_SRC sh
+    ansible pvenodes -m ping -i inventory --user=ansible  --private-key ~/.ssh/ansible-key
+    #+END_SRC
+    again, expect one "pong" from each node.

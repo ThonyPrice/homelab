@@ -1,0 +1,7 @@
+[pvenodes]
+192.168.1.101
+192.168.1.102
+
+[pvenodes_primary]
+# The single primary node where the pve cluster will be created
+192.168.1.101

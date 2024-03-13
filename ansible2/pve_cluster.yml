@@ -1,0 +1,13 @@
+- hosts: pvenodes_primary
+  tasks:
+
+  - name: create pve cluster
+    become: true
+    command: "pvecm create cluster01"
+    ignore_errors: True
+
+  # TODO: It would be fantastic if it was possible to join secondary
+  # nodes to the cluster using Ansible. However, when adding a node
+  # to clustter with 'pvecm add <hostname> the root password is
+  # prompted interactively rendering the task impossible for Ansible.
+  # Ref: https://pve.proxmox.com/pve-docs/pvecm.1.html
