@@ -1,0 +1,4 @@
+---
+# Ansible user with (or to be granted) access to managed hosts
+ansible_username: "ansible"
+ansible_ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJUlpRnqXfSyNVUIibW3mmZMKgx7xIcndgiaQEZfd5Zs ansible@homelab"

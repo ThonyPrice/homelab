@@ -1,0 +1,27 @@
+---
+- name: Remove Proxmox Enterprise repository
+  apt_repository:
+    repo: "deb https://enterprise.proxmox.com/debian/pve bookworm pve-enterprise"
+    state: absent
+    update_cache: no
+
+- name: Add Proxmox no-subscription repository
+  # ref: https://pve.proxmox.com/wiki/Package_Repositories#sysadmin_no_subscription_repo
+  copy:
+    src: sources.list
+    dest: /etc/apt/sources.list
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Update APT package cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 7200
+
+- name: Remove no-subscription notification
+  # Ref: https://dannyda.com/2020/05/17/how-to-remove-you-do-not-have-a-valid-subscription-for-this-server-from-proxmox-virtual-environment-6-1-2-proxmox-ve-6-1-2-pve-6-1-2/
+  shell:
+    cmd: |
+      sed -i.backup -z "s/res === null || res === undefined || \!res || res\n\t\t\t.data.status.toLowerCase() \!== 'active'/false/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js && systemctl restart pveproxy.service
+  changed_when: False

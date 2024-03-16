@@ -1,0 +1,36 @@
+---
+- name: Install sudo package
+  apt:
+    name: sudo
+
+- name: Create Ansible user
+  user:
+    name: "{{ ansible_user }}"
+    shell: /bin/bash
+  register: create_user
+
+- name: Add Ansible ssh key
+  authorized_key:
+    user: "{{ ansible_user }}"
+    key: "{{ ansible_ssh_key }}"
+
+- name: Add ansible user to sudoers
+  copy:
+    src: sudoer_ansible
+    dest: /etc/sudoers.d/ansible
+    owner: root
+    group: root
+    mode: 0440
+
+- name: Add Proxmox pve user
+  become: true
+  command: "pveum useradd ansible@pve -comment 'Designated Ansible user'"
+  ignore_errors: True
+  when: create_user.changed
+
+- name: Grant Ansible pve user Administrator role
+  # TODO: Principle of least privilege - Avoid granting admin role
+  become: true
+  command: "pveum acl modify / -user ansible@pve -role PVEAuditor"
+  ignore_errors: True
+  when: create_user.changed

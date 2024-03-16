@@ -1,0 +1,6 @@
+---
+- name: Cloud Init
+  hosts: pvenode_primary
+  remote_user: root
+  roles:
+    - role: cloud-init

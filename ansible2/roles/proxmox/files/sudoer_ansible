@@ -1,0 +1,2 @@
+# Allow passwordless sudo for the user 'ansible'
+ansible ALL=(ALL) NOPASSWD: ALL

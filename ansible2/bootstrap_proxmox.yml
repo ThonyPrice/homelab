@@ -1,0 +1,6 @@
+---
+- name: Bootstrap Proxmox
+  hosts: pvenodes
+  remote_user: root
+  roles:
+    - role: proxmox

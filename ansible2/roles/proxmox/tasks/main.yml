@@ -1,0 +1,7 @@
+---
+- name: Create Ansible user on PVE nodes
+  include_tasks: pve_ansible_user.yml
+  tags: bootstrap
+
+- name: Configure Proxmox options
+  include_tasks: pve_config.yml
