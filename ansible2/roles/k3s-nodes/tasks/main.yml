@@ -1,0 +1,9 @@
+---
+- name: Install proxmoxer
+  apt:
+    name:
+    - python3-proxmoxer
+    state: latest
+
+- include_tasks: master-nodes.yml
+- include_tasks: worker-nodes.yml

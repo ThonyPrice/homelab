@@ -1,0 +1,6 @@
+---
+- name: k3s nodes
+  hosts: pvenode_primary
+  remote_user: ansible
+  roles:
+    - role: k3s-nodes

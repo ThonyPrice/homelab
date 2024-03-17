@@ -11,7 +11,7 @@
 
 - name: Add Ansible ssh key
   authorized_key:
-    user: "{{ ansible_user }}"
+    user: "{{ ansible_username }}"
     key: "{{ ansible_ssh_key }}"
 
 - name: Add ansible user to sudoers
@@ -24,13 +24,13 @@
 
 - name: Add Proxmox pve user
   become: true
-  command: "pveum useradd ansible@pve -comment 'Designated Ansible user'"
+  command: "pveum useradd {{ ansible_username }}@pam -comment 'Designated Ansible user'"
   ignore_errors: True
   when: create_user.changed
 
 - name: Grant Ansible pve user Administrator role
-  # TODO: Principle of least privilege - Avoid granting admin role
+  # TODO: Principle of least privilege - Avoid granting admin role...
   become: true
-  command: "pveum acl modify / -user ansible@pve -role PVEAuditor"
+  command: "pveum acl modify / -user {{ ansible_username }}@pam -role PVEAdmin"
   ignore_errors: True
   when: create_user.changed

@@ -78,7 +78,7 @@ ansible-playbook pve_onboard.yml -i inventory --user=root -
 
 Validate the SSH key connection with:
 #+BEGIN_SRC sh
-ansible pvenodes -m ping -i inventory --user=ansible  --private-key ~/.ssh/ansible_homelab
+ansible pvenodes -m ping -i inventory --user=ansible --private-key ~/.ssh/ansible_homelab
 #+END_SRC
 again, expect one "pong" from each node.
 

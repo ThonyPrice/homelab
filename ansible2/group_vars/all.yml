@@ -2,3 +2,13 @@
 # Ansible user with (or to be granted) access to managed hosts
 ansible_username: "ansible"
 ansible_ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJUlpRnqXfSyNVUIibW3mmZMKgx7xIcndgiaQEZfd5Zs ansible@homelab"
+
+ansible_token_id: "deployment-token"
+# This should be kept secret, add into Ansible vault?
+# NOTE: Since still in exploration phase, this token will be replaced
+# many times and I'm not concerned putting it upstream until I've come
+# around to harden the setup #yolo
+ansible_token_secret: "3523098f-0838-41b9-8d6a-034523fcce35"
+
+k3s_master_nodes: 3
+k3s_worker_nodes: 3

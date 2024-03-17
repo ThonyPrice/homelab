@@ -1,0 +1,46 @@
+---
+- name: Clone cloud-init template for worker node
+  community.general.proxmox_kvm:
+    api_user: "{{ ansible_user }}@pam"
+    api_token_id: "{{ ansible_token_id }}"
+    api_token_secret: "{{ ansible_token_secret }}"
+    api_host: 192.168.1.101
+    node: pve01
+    proxmox_default_behavior: "compatibility"
+    clone: vm-id-9001 # arbitray value, but required
+    vmid: 9002
+    newid: "210{{ item }}"
+    name: "k3s-worker-{{ item }}"
+    full: true
+    net:
+      net0: "virtio,bridge=vmbr1,tag=77"
+
+  with_sequence: start=0 count="{{ k3s_worker_nodes }}"
+
+- name: Update VM ipconfig to set ip address
+  community.general.proxmox_kvm:
+    api_user: "{{ ansible_user }}@pam"
+    api_token_id: "{{ ansible_token_id }}"
+    api_token_secret: "{{ ansible_token_secret }}"
+    api_host: 192.168.1.101
+    node: pve01
+    proxmox_default_behavior: "compatibility"
+    vmid: "210{{ item }}"
+    ipconfig:
+      ipconfig0: "ip=192.168.1.5{{ item }}/24"
+    update: true
+
+  changed_when: False
+  with_sequence: start=0 count="{{ k3s_worker_nodes }}"
+
+- name: Start worker VM
+  community.general.proxmox_kvm:
+    api_user: "{{ ansible_user }}@pam"
+    api_token_id: "{{ ansible_token_id }}"
+    api_token_secret: "{{ ansible_token_secret }}"
+    api_host: 192.168.1.101
+    node: pve01
+    name: "k3s-worker-{{ item }}"
+    state: started
+
+  with_sequence: start=0 count="{{ k3s_worker_nodes }}"
