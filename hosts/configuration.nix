@@ -54,9 +54,6 @@
     isNormalUser = true;
     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
     packages = with pkgs; [ tree ];
-    # Created using mkpasswd
-    hashedPassword =
-      "$6$026yeBrVd8/z.7CJ$e9Fl5oMabKXM6fRC0V7kG/LCZnCyunekKLY4T3Vi/zQXV7PpOcTchDpxr0opnI3zA4.2V9yyu51h1tF.4UoHT1";
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOG6r+a1SqfwK48W8AaZZlBLQvs2iTAyV8zsb5wJZLC6 thonyprice@gmail.com"
     ];

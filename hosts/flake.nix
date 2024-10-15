@@ -11,7 +11,7 @@
     let
       nodes = [
         "homelab-0" # 192.168.1.101"
-        #"homelab-1" # 192.168.1.102"
+        "homelab-1" # 192.168.1.102"
       ];
     in {
       nixosConfigurations = builtins.listToAttrs (map (name: {
