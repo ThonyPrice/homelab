@@ -8,11 +8,7 @@
   };
 
   outputs = { self, nixpkgs, disko, ... }@inputs:
-    let
-      nodes = [
-        "homelab-0" # 192.168.1.101"
-        "homelab-1" # 192.168.1.102"
-      ];
+    let nodes = [ "homelab-0" "homelab-1" ];
     in {
       nixosConfigurations = builtins.listToAttrs (map (name: {
         name = name;

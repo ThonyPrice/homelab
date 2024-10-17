@@ -8,9 +8,9 @@
     '';
   };
 
-  boot.loader.grub = {
-    efisupport = true;
-    efiinstallasremovable = true;
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi.canTouchEfiVariables = true;
   };
 
   services.openssh.enable = true;
