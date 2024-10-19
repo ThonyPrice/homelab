@@ -1,4 +1,4 @@
-# Homelab
+
 
 ## Host Machines Setup
 
@@ -62,4 +62,43 @@ Post bootstrapping, any changes to a node _N_ will be applied by:
 
 ``` bash
 nixos-rebuild switch --flake ./hosts#homelab-<N> --target-host root@homelab-<N>
-``
+```
+
+## Sops Nix
+
+Sops nix is used for declarative and reproducible secret provisioning.
+
+### Bootstrapping
+
+Generate Sops key:
+``` bash
+mkdir -p ~/.config/sops/age
+nix-shell -p ssh-to-age --run "ssh-to-age -private-key -i ~/.ssh/homelab-thony > ~/.config/sops/age/keys.txt"
+```
+
+Get age public key to insert into `homelab/.sops.yaml`:
+``` bash
+age-keygen -y ~/.config/sops/age/keys.txt
+```
+
+Generate k3s secret:
+``` bash
+nix-shell -p openssl --run "openssl rand -base64 64"
+```
+
+Add and edit secret file to include k3s token:
+``` bash
+nix-shell -p openssl --run "openssl rand -base64 64"
+```
+
+Copy _private_ key to nodes to enable Sops decryption
+``` bash
+scp ~/.ssh/homelab-thony root@homelab-0:/etc/ssh/homelab
+```
+
+Get kubeconfig:
+``` bash
+mkdir -p ~/.kube
+scp root@homelab-0:/etc/rancher/k3s/k3s.yaml ~/.kube/config
+sed -i -e 's/127.0.0.1/homelab-0/g' ~/.kube/config
+```

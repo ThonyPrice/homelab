@@ -3,11 +3,15 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
+
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, disko, ... }@inputs:
+  outputs = { self, nixpkgs, disko, sops-nix, ... }@inputs:
     let nodes = [ "homelab-0" "homelab-1" ];
     in {
       nixosConfigurations = builtins.listToAttrs (map (name: {
@@ -16,10 +20,11 @@
           specialArgs = { meta = { hostname = name; }; };
           system = "x86_64-linux";
           modules = [
-            disko.nixosModules.disko
-            ./hardware-configuration.nix
-            ./disko-config.nix
             ./configuration.nix
+            ./disko-config.nix
+            ./hardware-configuration.nix
+            disko.nixosModules.disko
+            sops-nix.nixosModules.sops
           ];
         };
       }) nodes);

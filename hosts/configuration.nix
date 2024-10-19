@@ -8,6 +8,12 @@
     '';
   };
 
+  sops.defaultSopsFile = ./../secrets/secrets.yaml;
+  sops.age.sshKeyPaths = [ "/etc/ssh/homelab" ];
+  sops.age.keyFile = "/var/lib/sops-nix/key.txt";
+  sops.age.generateKey = true;
+  sops.secrets.k3s-token = { };
+
   boot.loader = {
     systemd-boot.enable = true;
     efi.canTouchEfiVariables = true;
@@ -27,22 +33,22 @@
     keyMap = "sv-latin1";
   };
 
-  # services.k3s = {
-  #   enable = true;
-  #   role = "server";
-  #   tokenFile = /var/lib/rancher/k3s/server/token;
-  #   extraFlags = toString ([
-  #     ''--write-kubeconfig-mode "0644"''
-  #     "--cluster-init"
-  #     "--disable servicelb"
-  #     "--disable traefik"
-  #     "--disable local-storage"
-  #   ] ++ (if meta.hostname == "homelab-0" then
-  #     [ ]
-  #   else
-  #     [ "--server https://homelab-0:6443" ]));
-  #   clusterInit = (meta.hostname == "homelab-0");
-  # };
+  services.k3s = {
+    enable = true;
+    role = "server";
+    tokenFile = "/run/secrets/k3s-token";
+    extraFlags = toString ([
+      ''--write-kubeconfig-mode "0644"''
+      "--cluster-init"
+      "--disable servicelb"
+      "--disable traefik"
+      "--disable local-storage"
+    ] ++ (if meta.hostname == "homelab-0" then
+      [ ]
+    else
+      [ "--server https://homelab-0:6443" ]));
+    clusterInit = (meta.hostname == "homelab-0");
+  };
 
   services.openiscsi = {
     enable = true;
