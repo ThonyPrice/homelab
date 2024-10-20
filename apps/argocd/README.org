@@ -30,9 +30,9 @@ nix-shell -p argocd --run "argocd account update-password --port-forward-namespa
 5. Create the first ArgoCD Application which manifest include the definition of ArgoCD itself
 #+BEGIN_SRC sh
 kubectl config set-context --current --namespace=argocd
-argocd app create argocd \
+nix-shell -p argocd --run "argocd app create argocd \
     --repo https://github.com/thonyprice/homelab \
     --path apps/argocd/gitops \
     --dest-server https://kubernetes.default.svc \
-    --dest-namespace argocd
+    --dest-namespace argocd"
 #+END_SRC
