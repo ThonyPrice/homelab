@@ -1,0 +1,38 @@
+#+title: Argo CD
+
+Declarative, GitOps continuous delivery tool for Kubernetes.
+
+https://github.com/argoproj/argo-cd
+
+* Installation
+
+*OBS:* ArgoCd is the first app installed on the cluster.
+Therefore, it's the only app that is installed through ~kubectl apply~-ing manifests.
+
+1. Install ArgoCD in the cluster. From the ~homelab/apps/argocd~ directory run
+#+BEGIN_SRC sh
+kubectl create namespace argocd
+kubectl apply -k .
+#+END_SRC
+
+2. Grab ArgoCD's initial password
+#+BEGIN_SRC sh
+nix-shell -p argocd --run "argocd admin initial-password -n argocd"
+#+END_SRC
+
+3. Port-forward to ArgoCD's API server, authenticate the CLI, and update password
+#+BEGIN_SRC sh
+kubectl port-forward svc/argocd-server -n argocd 8080:443;
+nix-shell -p argocd --run "argocd login localhost:8080 --port-forward-namespace argocd"
+nix-shell -p argocd --run "argocd account update-password --port-forward-namespace argocd"
+#+END_SRC
+
+5. Create the first ArgoCD Application which manifest include the definition of ArgoCD itself
+#+BEGIN_SRC sh
+kubectl config set-context --current --namespace=argocd
+argocd app create argocd \
+    --repo https://github.com/thonyprice/homelab \
+    --path apps/argocd/gitops \
+    --dest-server https://kubernetes.default.svc \
+    --dest-namespace argocd
+#+END_SRC
