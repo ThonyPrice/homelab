@@ -6,3 +6,4 @@ resources:
 - argocd.yaml
 - argocd-apps.yaml
 - metallb.yaml
+- nginx-example.yaml
