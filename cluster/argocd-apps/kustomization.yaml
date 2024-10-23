@@ -5,4 +5,4 @@ namespace: argocd
 resources:
 - argocd.yaml
 - argocd-apps.yaml
-# - metallb.yaml
+- metallb.yaml
