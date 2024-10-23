@@ -6,13 +6,14 @@ https://github.com/argoproj/argo-cd
 
 * Installation
 
-*OBS:* ArgoCd is the first app installed on the cluster.
-Therefore, it's the only app that is installed through ~kubectl apply~-ing manifests.
+*OBS:* ArgoCD is the first app installed on the cluster.
+This installation is part of the cluter bootstrapping.
+Hence, it is the only app where manifests are pushed manually with ~kubectl apply~.
 
-1. Install ArgoCD in the cluster. From the ~homelab/apps/argocd~ directory run
+1. Install ArgoCD in the cluster
 #+BEGIN_SRC sh
 kubectl create namespace argocd
-kubectl apply -k .
+kubectl apply -k homelab/apps/argocd -n argocd
 #+END_SRC
 
 2. Grab ArgoCD's initial password
@@ -27,12 +28,7 @@ nix-shell -p argocd --run "argocd login localhost:8080 --port-forward-namespace 
 nix-shell -p argocd --run "argocd account update-password --port-forward-namespace argocd"
 #+END_SRC
 
-5. Create the first ArgoCD Application which manifest include the definition of ArgoCD itself
+5. Create the first ArgoCD Application resource ~argocd~ that include the definition of ArgoCD itself
 #+BEGIN_SRC sh
-kubectl config set-context --current --namespace=argocd
-nix-shell -p argocd --run "argocd app create argocd \
-    --repo https://github.com/thonyprice/homelab \
-    --path apps/argocd/gitops \
-    --dest-server https://kubernetes.default.svc \
-    --dest-namespace argocd"
+kubectl apply -k ./gitops -n argocd
 #+END_SRC
