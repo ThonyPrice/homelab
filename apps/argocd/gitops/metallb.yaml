@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metallb
+spec:
+  project: default
+  source:
+    path: apps/metallb
+    repoURL: 'https://github.com/thonyprice/homelab'
+    targetRevision: HEAD
+  destination:
+    namespace: metallb-system
+    server: 'https://kubernetes.default.svc'
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
