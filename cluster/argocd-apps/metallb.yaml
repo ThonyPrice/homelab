@@ -1,15 +1,15 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: argocd
+  name: metallb
 spec:
   project: default
   source:
-    path: apps/argocd
+    path: cluster/metallb
     repoURL: 'https://github.com/thonyprice/homelab'
     targetRevision: HEAD
   destination:
-    namespace: argocd
+    namespace: metallb-system
     server: 'https://kubernetes.default.svc'
   syncPolicy:
     automated:

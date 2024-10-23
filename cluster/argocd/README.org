@@ -13,7 +13,7 @@ Hence, it is the only app where manifests are pushed manually with ~kubectl appl
 1. Install ArgoCD in the cluster
 #+BEGIN_SRC sh
 kubectl create namespace argocd
-kubectl apply -k homelab/apps/argocd -n argocd
+kubectl apply -k homelab/cluster/argocd -n argocd
 #+END_SRC
 
 2. Grab ArgoCD's initial password
@@ -28,7 +28,7 @@ nix-shell -p argocd --run "argocd login localhost:8080 --port-forward-namespace 
 nix-shell -p argocd --run "argocd account update-password --port-forward-namespace argocd"
 #+END_SRC
 
-5. Create the first ArgoCD Application resource ~argocd~ that include the definition of ArgoCD itself
+5. Create the first ArgoCD Application resource ~argocd-apps~ that includes the definition of ArgoCD itself
 #+BEGIN_SRC sh
-kubectl apply -k ./gitops -n argocd
+kubectl apply -k homelab/cluster/argocd-apps -n argocd
 #+END_SRC
