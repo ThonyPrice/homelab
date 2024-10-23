@@ -1,5 +1,5 @@
 namespace: metallb-system
 
 resources:
-  - pool_adv_l2.yaml
+  - metallb_config.yaml
   - github.com/metallb/metallb/config/native?ref=v0.14.8
