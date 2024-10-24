@@ -1,13 +1,5 @@
 # Reference: https://github.com/NixOS/nixpkgs/blob/master/pkgs/applications/networking/cluster/k3s/docs/examples/STORAGE.md
 ---
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: longhorn-nixos-path
-  namespace: longhorn-system
-data:
-  PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/run/wrappers/bin:/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin
----
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
