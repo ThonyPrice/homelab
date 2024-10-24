@@ -15,11 +15,3 @@ spec:
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
-  sources:
-    - chart: longhorn
-      repoURL: https://charts.longhorn.io/
-      targetRevision: v1.7.2
-      helm:
-        values: |
-          preUpgradeChecker:
-            jobEnabled: false
