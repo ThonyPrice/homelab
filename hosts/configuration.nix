@@ -50,13 +50,11 @@
     clusterInit = (meta.hostname == "homelab-0");
   };
 
-  # Fixes for longhorn
-  systemd.tmpfiles.rules =
-    [ "L+ /usr/local/bin - - - - /run/current-system/sw/bin/" ];
-  virtualisation.docker.logDriver = "json-file";
+  # Fixes for longhorn, see
+  # https://github.com/NixOS/nixpkgs/blob/master/pkgs/applications/networking/cluster/k3s/docs/examples/STORAGE.md#longhorn
   services.openiscsi = {
     enable = true;
-    name = "iqn.2016-04.com.open-iscsi:${meta.hostname}";
+    name = "${config.networking.hostName}-initiatorhost";
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -77,7 +75,7 @@
     k3s
     neovim
     cifs-utils
-    nfs-utils
+    nfs-utils # required for longhorn
   ];
 
   system.stateVersion = "24.05";
