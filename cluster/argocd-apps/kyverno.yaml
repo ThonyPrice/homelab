@@ -1,3 +1,5 @@
+# Ref: https://kyverno.io/docs/installation/platform-notes/#notes-for-argocd-users
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -7,7 +9,7 @@ spec:
   project: default
   sources:
     - chart: kyverno
-      repoURL: https://kyverno.github.io/kyverno/
+      repoURL: https://kyverno.github.io/kyverno
       targetRevision: v1.12.6
     - repoURL: 'https://github.com/thonyprice/homelab'
       path: cluster/kyverno
@@ -16,5 +18,9 @@ spec:
     namespace: kyverno
     server: 'https://kubernetes.default.svc'
   syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - Replace=true
