@@ -10,7 +10,7 @@ spec:
   sources:
     - chart: kyverno
       repoURL: https://kyverno.github.io/kyverno
-      targetRevision: v1.12.6
+      targetRevision: v3.2.7
     - repoURL: 'https://github.com/thonyprice/homelab'
       path: cluster/kyverno
       targetRevision: HEAD
