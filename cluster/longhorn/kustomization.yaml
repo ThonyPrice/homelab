@@ -4,4 +4,3 @@ kind: Kustomization
 namespace: longhorn-system
 resources:
   - fixnix.yaml
-  - https://raw.githubusercontent.com/longhorn/longhorn/v1.7.2/deploy/longhorn.yaml

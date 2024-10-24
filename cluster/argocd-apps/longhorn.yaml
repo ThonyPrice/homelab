@@ -5,10 +5,17 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    path: cluster/longhorn
-    repoURL: 'https://github.com/thonyprice/homelab'
-    targetRevision: HEAD
+  sources:
+    - chart: longhorn
+      repoURL: https://charts.longhorn.io/
+      targetRevision: v1.7.2 # Replace with the Longhorn version you'd like to install or upgrade to
+      helm:
+        values: |
+          preUpgradeChecker:
+            jobEnabled: false
+    - repoURL: 'https://github.com/thonyprice/homelab'
+      path: cluster/longhorn
+      targetRevision: HEAD
   destination:
     namespace: longhorn-system
     server: 'https://kubernetes.default.svc'
