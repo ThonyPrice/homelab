@@ -50,8 +50,7 @@
     clusterInit = (meta.hostname == "homelab-0");
   };
 
-  # Fixes for longhorn, see
-  # https://github.com/NixOS/nixpkgs/blob/master/pkgs/applications/networking/cluster/k3s/docs/examples/STORAGE.md#longhorn
+  # Fixes for longhorn, see https://github.com/NixOS/nixpkgs/blob/master/pkgs/applications/networking/cluster/k3s/docs/examples/STORAGE.md#longhorn
   services.openiscsi = {
     enable = true;
     name = "${config.networking.hostName}-initiatorhost";
