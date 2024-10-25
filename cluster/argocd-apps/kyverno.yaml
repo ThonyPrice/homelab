@@ -19,6 +19,7 @@ spec:
     - repoURL: 'https://github.com/thonyprice/homelab'
       path: cluster/kyverno
       targetRevision: HEAD
+  # TODO: Remove ignore once bug is resolved, see https://github.com/kyverno/kyverno/issues/10283
   ignoreDifferences:
     - group: "apiextensions.k8s.io"
       kind: ServiceAccount
