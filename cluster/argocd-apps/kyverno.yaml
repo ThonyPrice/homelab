@@ -24,6 +24,10 @@ spec:
       kind: "CronJob"
       jqPathExpressions:
         - .spec.jobTemplate.spec.template.spec.containers[] | select(.name == "cleanup")
+    - group: "kyverno.io"
+      kind: "ClusterPolicy"
+      jqPathExpressions:
+        - .spec.rules[] | select(.name == "add-env-vars")
   destination:
     namespace: kyverno
     server: 'https://kubernetes.default.svc'
