@@ -19,6 +19,9 @@ spec:
     - repoURL: 'https://github.com/thonyprice/homelab'
       path: cluster/kyverno
       targetRevision: HEAD
+  ignoreDifferences:
+    - group: "batch"
+      kind: "CronJob"
   destination:
     namespace: kyverno
     server: 'https://kubernetes.default.svc'
