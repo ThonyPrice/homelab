@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ingress-nginx
+spec:
+  project: default
+  source:
+    path: cluster/ingress-nginx
+    repoURL: 'https://github.com/thonyprice/homelab'
+    targetRevision: HEAD
+  destination:
+    namespace: ingress-nginx
+    server: 'https://kubernetes.default.svc'
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

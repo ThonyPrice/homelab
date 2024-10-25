@@ -5,6 +5,7 @@ namespace: argocd
 resources:
 - argocd.yaml
 - argocd-apps.yaml
+- ingress-nginx.yaml
 - kyverno.yaml
 - longhorn.yaml
 - metallb.yaml
