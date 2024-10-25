@@ -11,6 +11,11 @@ spec:
     - chart: kyverno
       repoURL: https://kyverno.github.io/kyverno
       targetRevision: v3.2.7
+      helm:
+        values: |
+          crds:
+            migration:
+              enabled: false
     - repoURL: 'https://github.com/thonyprice/homelab'
       path: cluster/kyverno
       targetRevision: HEAD
