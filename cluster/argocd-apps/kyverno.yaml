@@ -19,17 +19,6 @@ spec:
     - repoURL: 'https://github.com/thonyprice/homelab'
       path: cluster/kyverno
       targetRevision: HEAD
-  # TODO: Remove ignore once bug is resolved, see https://github.com/kyverno/kyverno/issues/10283
-  ignoreDifferences:
-    - group: "v1"
-      kind: ServiceAccount
-      name: kyverno-migrate-resources
-    - group: "rbac.authorization.k8s.io/v1"
-      kind: ClusterRole
-      name: "kyverno:migrate-resources"
-    - group: "rbac.authorization.k8s.io/v1"
-      kind: ClusterRoleBinding
-      name: "kyverno:migrate-resources"
   destination:
     namespace: kyverno
     server: 'https://kubernetes.default.svc'
@@ -38,6 +27,7 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
+      # INFO: Special sync options due to bug, see https://github.com/kyverno/kyverno/issues/10283
       - CreateNamespace=true
       - ServerSideApply=true
       - Replace=true
