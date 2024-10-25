@@ -9,3 +9,4 @@ resources:
 - longhorn.yaml
 - metallb.yaml
 - nginx-example.yaml
+- pihole.yaml
