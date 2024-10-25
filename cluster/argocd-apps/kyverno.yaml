@@ -19,6 +19,16 @@ spec:
     - repoURL: 'https://github.com/thonyprice/homelab'
       path: cluster/kyverno
       targetRevision: HEAD
+  ignoreDifferences:
+    - group: "apiextensions.k8s.io"
+      kind: ServiceAccount
+      name: kyverno-migrate-resources
+    - group: "apiextensions.k8s.io"
+      kind: ClusterRole
+      name: "kyverno:migrate-resources"
+    - group: "apiextensions.k8s.io"
+      kind: ClusterRoleBinding
+      name: "kyverno:migrate-resources"
   destination:
     namespace: kyverno
     server: 'https://kubernetes.default.svc'
