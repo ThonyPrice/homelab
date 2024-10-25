@@ -22,6 +22,8 @@ spec:
   ignoreDifferences:
     - group: "batch"
       kind: "CronJob"
+      jqPathExpressions:
+        - .spec.jobTemplate.spec.template.spec.containers[] | select(.name == "cleanup")
   destination:
     namespace: kyverno
     server: 'https://kubernetes.default.svc'
