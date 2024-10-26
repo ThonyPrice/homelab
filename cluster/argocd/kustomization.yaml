@@ -6,3 +6,6 @@ namespace: argocd
 resources:
 - ingress.yaml
 - https://raw.githubusercontent.com/argoproj/argo-cd/v2.7.2/manifests/install.yaml
+
+patches:
+- path: argocd-server-service.yaml
