@@ -13,6 +13,10 @@ ingress-nginx:
       # configuration for the controller. This is optional if the controller
       # does not require extra parameters.
       parameters: {}
+      # Additional command line arguments to pass to Ingress-Nginx Controller E.g. to specify the default SSL certificate you can use
+      extraArgs:
+        # SSL passthrough, required for argocd ingress
+        - --enable-ssl-passthrough
     # -- For backwards compatibility with ingress.class annotation, use ingressClass.
     # Algorithm is as follows, first ingressClassName is considered, if not present, controller looks for ingress.class annotation
     ingressClass: nginx-internal
