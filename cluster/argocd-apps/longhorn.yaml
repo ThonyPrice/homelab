@@ -18,7 +18,9 @@ spec:
             enabled: true
             host: longhorn.home
             ingressClassName: nginx-internal
-          service.ui.type: "LoadBalancer"
+          service:
+            ui:
+              type: LoadBalancer
     - repoURL: 'https://github.com/thonyprice/homelab'
       path: cluster/longhorn
       targetRevision: HEAD
