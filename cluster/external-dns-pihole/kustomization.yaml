@@ -1,2 +1,3 @@
 resources:
   - external-dns.yaml
+  - pihole-secret.yaml
