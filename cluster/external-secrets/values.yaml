@@ -1,0 +1,7 @@
+namespace:
+  # All namespaces where external secret should be enables,
+  # see https://external-secrets.io/latest/guides/security-best-practices/#1-namespace-isolation
+  - argocd
+  - longhorn-system
+  - pihole
+  - pihole-system
