@@ -22,8 +22,10 @@ spec:
             jobEnabled: false
           ingress:
             enabled: true
-            host: longhorn.home
+            host: longhorn.home.lab
             ingressClassName: nginx-internal
+            tls: true
+            tlsSecret: longhorn-tls
           service:
             ui:
               type: LoadBalancer
