@@ -1,7 +1,7 @@
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: letsencrypt-prod
+  name: letsencrypt-production
 spec:
   acme:
     # The ACME server URL
@@ -10,9 +10,9 @@ spec:
     email: thonyprice+letsencrypt@gmail.com
     # Name of a secret used to store the ACME account private key
     privateKeySecretRef:
-      name: letsencrypt-prod
+      name: letsencrypt-production
     # Enable the HTTP-01 challenge provider
     solvers:
       - http01:
           ingress:
-            ingressClassName: nginx
+            ingressClassName: nginx-internal
