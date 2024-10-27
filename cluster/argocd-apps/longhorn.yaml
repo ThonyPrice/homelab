@@ -24,7 +24,7 @@ spec:
             annotations:
               cert-manager.io/cluster-issuer: letsencrypt-staging
             enabled: true
-            host: longhorn.thonyprice.com
+            host: longhorn.home.lab
             ingressClassName: nginx-internal
             tls: true
             tlsSecret: longhorn-tls
