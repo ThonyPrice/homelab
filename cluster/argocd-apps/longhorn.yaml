@@ -21,6 +21,9 @@ spec:
           service:
             ui:
               type: LoadBalancer
+              # No need for a nodePort for LoadBalancer but the chart will define
+              # a nodePort either way so not setting it yields an argocd diff
+              nodePort: 32216
     - repoURL: 'https://github.com/thonyprice/homelab'
       path: cluster/longhorn
       targetRevision: HEAD
