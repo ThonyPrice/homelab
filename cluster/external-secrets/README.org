@@ -9,9 +9,10 @@ Hence, installing it require jumping through some hoops compared to other packag
 2. Create and configure a GCP Service Account according to this guide, https://external-secrets.io/latest/provider/google-secrets-manager/#gcp-service-account-authentication.
    Create a key and download it.
 3. Apply the chart: ~helm template homelab/cluster/external-secrets | ~kubectl -n external secrets apply -f -~
-4. The *ClusterSecretStore will fail*, this is expected!
-   We have not populated the ~gcpsm-secret~ with the actual key contents.
-   Because, we do not want to commit these to git.
+4. The *ClusterSecretStore will fail* when attmpting to create the first ~ExternalSecret~...
+   This is expected!
+   We have not populated the ~gcpsm-secret~ with the actual key contents because, we do not want to commit these to git.
+   Reviewing the secret contents show it defines dummy data, ~kubectl -n external-secrets get secret gcpsm-secret -o json | jq -r '.data."secret-access-credentials"' | base64 -d~
 5. Replace the ~gcpsm-secret~ data:
 #+BEGIN_SRC sh
 $ KEY_FILE=~/Downloads/homelab-439906-6178eb616578.json
