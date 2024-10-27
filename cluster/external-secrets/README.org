@@ -23,5 +23,5 @@ $ helm template homelab/cluster/external-secrets | ~kubectl -n external secrets 
 $ KEY_FILE=~/Downloads/homelab-439906-6178eb616578.json
 $ cat templates/gcpsm-secret.template.json \
     | jq '.data."secret-access-credentials" |= "'$(cat $KEY_FILE | base64 -w 0)'"' \
-    | kubectl apply -f -
+    | kubectl -n external-secrets apply -f -
 #+END_SRC
