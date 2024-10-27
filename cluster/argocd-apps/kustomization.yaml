@@ -6,6 +6,7 @@ resources:
 - argocd.yaml
 - argocd-apps.yaml
 - external-dns-pihole.yaml
+- external-secrets.yaml
 - ingress-nginx.yaml
 - kyverno.yaml
 - longhorn.yaml

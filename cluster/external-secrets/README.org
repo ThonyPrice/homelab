@@ -1,0 +1,10 @@
+#+title: External Secrets
+
+* Installation
+
+1. Create and configure service account according to this guide, https://external-secrets.io/latest/provider/google-secrets-manager/#gcp-service-account-authentication
+2. Update the details of the ~gcpsm-secret.yaml~ file with details from created SA key
+3. Create ~external-secrets~ namespace: ~kubectl create namespace external-secrets~
+4. Apply the secret manifest manually: ~kubectl apply -f gcpsm-secret.yaml -n external-secrets~
+5. *DELETE THE SECRET ACEESS CREDENTIALS* from ~gcpsm-secret.yaml~ - these should *NOT* be comitted to git
+6. Now, apply the chart: ~helm template homelab/cluster/external-secrets | ~kubectl apply -f -n external-secrets~
