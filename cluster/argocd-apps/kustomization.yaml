@@ -5,6 +5,7 @@ namespace: argocd
 resources:
 - argocd.yaml
 - argocd-apps.yaml
+- cert-manager.yaml
 - external-dns-pihole.yaml
 - external-secrets.yaml
 - ingress-nginx.yaml
