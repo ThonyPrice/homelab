@@ -1,2 +1,0 @@
-# Ignore gcp secret manager template
-templates/gcpsm-secret.template.yaml
