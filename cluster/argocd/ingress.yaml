@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: nginx-internal
   rules:
-  - host: argocd.home
+  - host: argocd.fm92.org
     http:
       paths:
       - path: /

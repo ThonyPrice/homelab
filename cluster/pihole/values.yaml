@@ -8,7 +8,7 @@ pihole:
   ingress:
     enabled: true
     hosts:
-      - "pihole.home"
+      - "pihole.fm92.org"
 
   admin:
     existingSecret: pihole-password
