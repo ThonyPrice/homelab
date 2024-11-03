@@ -12,7 +12,7 @@ spec:
   tls:
   - hosts:
     - argocd.fm92.org
-    secretName: longhorn-tls
+    secretName: argocd-tls
   rules:
   - host: argocd.fm92.org
     http:
