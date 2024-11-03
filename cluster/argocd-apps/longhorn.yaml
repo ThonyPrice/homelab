@@ -22,7 +22,7 @@ spec:
             jobEnabled: false
           ingress:
             annotations:
-              cert-manager.io/cluster-issuer: letsencrypt-staging
+              cert-manager.io/cluster-issuer: letsencrypt-production
             enabled: true
             host: longhorn.fm92.org
             ingressClassName: nginx-internal
