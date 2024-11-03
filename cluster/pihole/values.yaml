@@ -7,6 +7,14 @@ pihole:
 
   ingress:
     enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    ingressClassName: nginx-internal
+    tls:
+    - hosts:
+      - pihole.fm92.org
+      secretName: pihole-tls
+    tlsSecret: pihole-tls
     hosts:
       - "pihole.fm92.org"
 
