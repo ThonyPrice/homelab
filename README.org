@@ -24,21 +24,21 @@ In a nutshell it includes:
 [[https://github.com/Mic92/sops-nix][Sops Nix]] is used for declarative and reproducible secret provisioning.
 Since the clustr nodes run NixOS, the Nix version of Sops is simple to intergate.
 
-1 - Generate Sops key:
+1. Generate Sops key:
 #+BEGIN_SRC sh
 mkdir -p ~/.config/sops/age
 nix-shell -p ssh-to-age --run "ssh-to-age -private-key -i ~/.ssh/homelab-thony > ~/.config/sops/age/keys.txt"
 #+END_SRC
-2 - Get age public key to insert into ~homelab/.sops.yaml~:
+2. [@2] Get age public key to insert into ~homelab/.sops.yaml~:
 #+BEGIN_SRC sh
 age-keygen -y ~/.config/sops/age/keys.txt
 #+END_SRC
-3 - Add the key to ~.sops.yaml~
-4 - Generate k3s secret, this token will be used by nodes to join the Kubernetes cluster:
+3. [@3] Add the key to ~.sops.yaml~
+4. Generate k3s secret, this token will be used by nodes to join the Kubernetes cluster:
 #+BEGIN_SRC sh
 nix-shell -p openssl --run "openssl rand -base64 64"
 #+END_SRC
-5 - Open secrets file with the following command and then add the token:
+5. [@5] Open secrets file with the following command and then add the token:
 #+BEGIN_SRC sh
 nix-shell -p sops --run "sops secrets/secrets.yaml"
 #+END_SRC
@@ -113,13 +113,13 @@ Now, some steps that are not very declarative yet required until I make a better
 4. Et voilá! The nodes are running a k3s cluster!
 
 Now, getting the kube config to interact with the cluster is a simple two step process:
-1 - Get kubeconfig and replace localhost with actual domain for one cluster node:
+1. Get kubeconfig and replace localhost with actual domain for one cluster node:
 #+BEGIN_SRC sh
 mkdir -p ~/.kube
 scp root@homelab-0:/etc/rancher/k3s/k3s.yaml ~/.kube/config
 sed -i -e 's/127.0.0.1/homelab-0/g' ~/.kube/config
 #+END_SRC
-2 - Validate cluster nodes are reachable and healthy:
+2. [@2] Validate cluster nodes are reachable and healthy:
 #+BEGIN_SRC sh
 kubectl get nodes
 #+END_SRC
