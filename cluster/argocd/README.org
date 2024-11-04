@@ -1,10 +1,11 @@
 #+title: Argo CD
 
-Declarative, GitOps continuous delivery tool for Kubernetes.
+* About
 
+Declarative, GitOps continuous delivery tool for Kubernetes.
 https://github.com/argoproj/argo-cd
 
-* Installation
+* Setup
 
 *OBS:* ArgoCD is the first app installed on the cluster.
 This installation is part of the cluter bootstrapping.

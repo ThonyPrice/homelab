@@ -1,6 +1,11 @@
 #+title: External Secrets
 
-* Installation
+* About
+
+Pull secrets from external backend.
+I use GCP Secret Manager.
+
+* Setup
 
 This chart is part of the cluster bootstrap process.
 Hence, installing it require jumping through some hoops compared to other packages that are truly GitOps mananaged.

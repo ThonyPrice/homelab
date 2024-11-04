@@ -1,0 +1,14 @@
+#+title: External DNS Pihole
+
+* About
+
+Manage DNS records for ~pihole~
+
+* Setup
+
+The package was set up by
+
+1. Fetching the manifests at https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/pihole.md#externaldns-manifest
+2. Adding secret with pihole password to enable writing DNS records
+3. Note, this should only handle internal DNS.
+   Hence, it's only applied on ~ingressClass: nginx-internal~

@@ -1,0 +1,14 @@
+#+title: Ingress Nginx
+
+* About
+
+Ingress manager.
+Used for internal routing where ~ingressClass: nginx-internal~.
+
+* Setup
+
+The chart followed the standard Helm chart setup:
+
+1. Define details in ~Chart.yaml~
+2. Pull upstream chart by ~helm dependency build~
+3. Define some adaptions in ~values.yaml~
