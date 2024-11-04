@@ -15,8 +15,8 @@ In a nutshell it includes:
 
 - A system with ~nix~ installed, in my case that's one of the machines in https://github.com/ThonyPrice/nix-config
 - One or more host machines with static IP addresses, in my case
-  - ~192.168.1.101~ :: homelab-0
-  - ~192.168.1.102~ :: homelab-1
+  - ~192.168.1.101~: homelab-0
+  - ~192.168.1.102~: homelab-1
 - A passwordless SSH key, in my case ~homelab-thony~
 
 ** 0. Sops Nix
@@ -24,31 +24,24 @@ In a nutshell it includes:
 [[https://github.com/Mic92/sops-nix][Sops Nix]] is used for declarative and reproducible secret provisioning.
 Since the clustr nodes run NixOS, the Nix version of Sops is simple to intergate.
 
-1. Generate Sops key:
-   #+BEGIN_SRC sh
-   mkdir -p ~/.config/sops/age
-   nix-shell -p ssh-to-age --run "ssh-to-age -private-key -i ~/.ssh/homelab-thony > ~/.config/sops/age/keys.txt"
-   #+END_SRC
-
-2. Get age public key to insert into ~homelab/.sops.yaml~:
-   #+BEGIN_SRC sh
-   age-keygen -y ~/.config/sops/age/keys.txt
-   #+END_SRC
-
-3. Add the key to ~.sops.yaml~
-4. Generate k3s secret, this token will be used by nodes to join the Kubernetes cluster:
-   #+BEGIN_SRC sh
-   nix-shell -p openssl --run "openssl rand -base64 64"
-   #+END_SRC
-5. Open secrets file with the following command and then add the token:
-   #+BEGIN_SRC sh
-   nix-shell -p sops --run "sops secrets/secrets.yaml"
-   #+END_SRC
-6. *Bootstrap NixOS Nodes and come back to final step before deploying k3s cluster*
-7. Copy /private/ sops key to nodes to enable Sops decryption
-   #+BEGIN_SRC sh
-   scp ~/.ssh/homelab-thony root@homelab-0:/etc/ssh/homelab
-   #+END_SRC
+1 - Generate Sops key:
+#+BEGIN_SRC sh
+mkdir -p ~/.config/sops/age
+nix-shell -p ssh-to-age --run "ssh-to-age -private-key -i ~/.ssh/homelab-thony > ~/.config/sops/age/keys.txt"
+#+END_SRC
+2 - Get age public key to insert into ~homelab/.sops.yaml~:
+#+BEGIN_SRC sh
+age-keygen -y ~/.config/sops/age/keys.txt
+#+END_SRC
+3 - Add the key to ~.sops.yaml~
+4 - Generate k3s secret, this token will be used by nodes to join the Kubernetes cluster:
+#+BEGIN_SRC sh
+nix-shell -p openssl --run "openssl rand -base64 64"
+#+END_SRC
+5 - Open secrets file with the following command and then add the token:
+#+BEGIN_SRC sh
+nix-shell -p sops --run "sops secrets/secrets.yaml"
+#+END_SRC
 
 ** 1. Deploy NixOS Nodes
 
@@ -101,7 +94,7 @@ It's fine, just reset host with ~ssh-keygen -R homelab-0~ to resolve it.
 Any additional node /i/ where /i/ in /{2,...,N}/:
 #+BEGIN_SRC sh
 nix run github:nix-community/nixos-anywhere -- \
-    --flake ./hosts#homelab-i nixos@192.168.1.102
+    --flake ./hosts#homelab-<i> nixos@192.168.1.10<i>
 #+END_SRC
 
 *** Manage Nodes
@@ -114,21 +107,22 @@ nixos-rebuild switch --flake ./hosts#homelab-<i> --target-host root@homelab-<i>
 ** 2. Deploy k3s Cluster
 
 Now, some steps that are not very declarative yet required until I make a better setup:
-1. Comment /in/ the k3s cluster definition that you commented /out/ first thing in "1. Deploy NixOS Nodes"
-2. For every node /i/, rebuild with ~nixos-rebuild switch --flake ./hosts#homelab-<i> --target-host root@homelab-<i>~
-3. Et voilá! The nodes are running a k3s cluster!
+1. Copy /private/ sops key to nodes to enable Sops decryption ~scp ~/.ssh/homelab-thony root@homelab-<i>:/etc/ssh/homelab-<i>~
+2. Comment /in/ the k3s cluster definition that you commented /out/ first thing in /"1. Deploy NixOS Nodes"/
+3. For every node /i/, rebuild with ~nixos-rebuild switch --flake ./hosts#homelab-<i> --target-host root@homelab-<i>~
+4. Et voilá! The nodes are running a k3s cluster!
 
 Now, getting the kube config to interact with the cluster is a simple two step process:
-1. Get kubeconfig and replace localhost with actual domain for one cluster node:
-   #+BEGIN_SRC sh
-   mkdir -p ~/.kube
-   scp root@homelab-0:/etc/rancher/k3s/k3s.yaml ~/.kube/config
-   sed -i -e 's/127.0.0.1/homelab-0/g' ~/.kube/config
-   #+END_SRC
-2. Validate cluster nodes are reachable and healthy:
-   #+BEGIN_SRC sh
-   kubectl get nodes
-   #+END_SRC
+1 - Get kubeconfig and replace localhost with actual domain for one cluster node:
+#+BEGIN_SRC sh
+mkdir -p ~/.kube
+scp root@homelab-0:/etc/rancher/k3s/k3s.yaml ~/.kube/config
+sed -i -e 's/127.0.0.1/homelab-0/g' ~/.kube/config
+#+END_SRC
+2 - Validate cluster nodes are reachable and healthy:
+#+BEGIN_SRC sh
+kubectl get nodes
+#+END_SRC
 
 ** 3. Install Cluster Services
 
