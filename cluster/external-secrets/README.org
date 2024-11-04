@@ -12,21 +12,21 @@ Hence, installing it require jumping through some hoops compared to other packag
 
 1. Create ~external-secrets~ namespace:
 #+BEGIN_SRC sh
-$ kubectl create namespace external-secrets
+kubectl create namespace external-secrets
 #+END_SRC
-2. Create and configure a GCP Service Account according to this guide, https://external-secrets.io/latest/provider/google-secrets-manager/#gcp-service-account-authentication.
+2. [@2] Create and configure a GCP Service Account according to this guide, https://external-secrets.io/latest/provider/google-secrets-manager/#gcp-service-account-authentication.
    Create a key and download it.
 3. Apply the chart:
 #+BEGIN_SRC sh
-$ helm template homelab/cluster/external-secrets | ~kubectl -n external secrets apply -f -
+helm template homelab/cluster/external-secrets | ~kubectl -n external secrets apply -f -
 #+END_SRC
-4. The *ClusterSecretStore will fail* when attmpting retrieve the ~cgpsm Secret~.
+4. [@4] The *ClusterSecretStore will fail* when attmpting retrieve the ~cgpsm Secret~.
    This is expected!
    We have not created the secret because it should not be tracked in git.
 5. Manually create ~gcpsm-secret~:
 #+BEGIN_SRC sh
-$ KEY_FILE=~/Downloads/homelab-439906-6178eb616578.json
-$ cat templates/gcpsm-secret.template.json \
-    | jq '.data."secret-access-credentials" |= "'$(cat $KEY_FILE | base64 -w 0)'"' \
-    | kubectl -n external-secrets apply -f -
+KEY_FILE=~/Downloads/homelab-439906-6178eb616578.json
+cat templates/gcpsm-secret.template.json \
+  | jq '.data."secret-access-credentials" |= "'$(cat $KEY_FILE | base64 -w 0)'"' \
+  | kubectl -n external-secrets apply -f -
 #+END_SRC

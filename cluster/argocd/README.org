@@ -17,19 +17,19 @@ kubectl create namespace argocd
 kubectl apply -k homelab/cluster/argocd -n argocd
 #+END_SRC
 
-2. Grab ArgoCD's initial password
+2. [@2] Grab ArgoCD's initial password
 #+BEGIN_SRC sh
 nix-shell -p argocd --run "argocd admin initial-password -n argocd"
 #+END_SRC
 
-3. Port-forward to ArgoCD's API server, authenticate the CLI, and update password
+3. [@3] Port-forward to ArgoCD's API server, authenticate the CLI, and update password
 #+BEGIN_SRC sh
 kubectl port-forward svc/argocd-server -n argocd 8080:443;
 nix-shell -p argocd --run "argocd login localhost:8080 --port-forward-namespace argocd"
 nix-shell -p argocd --run "argocd account update-password --port-forward-namespace argocd"
 #+END_SRC
 
-5. Create the first ArgoCD Application resource ~argocd-apps~ that includes the definition of ArgoCD itself
+4. [@4] Create the first ArgoCD Application resource ~argocd-apps~ that includes the definition of ArgoCD itself
 #+BEGIN_SRC sh
 kubectl apply -k homelab/cluster/argocd-apps -n argocd
 #+END_SRC
