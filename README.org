@@ -1,0 +1,138 @@
+#+title: Homelab
+
+* About
+
+Welcome to my Homelab repository.
+This source intends to define /everything/ in my lab.
+In a nutshell it includes:
+- NixOS configuration for homelab hardware. This makes host machines 100% reproducible with settings for things such as drive partitioning, SSH keys, useres, k3s cluster bootstrapping, and more.
+- Kubernetes cluster services, all managed by ArgoCD making.
+- Terraform code to provision and configure supporting homelab services, such as CloudFlare and GCP.
+
+* Setting Everything Up
+
+** Prerequisites
+
+- A system with ~nix~ installed, in my case that's one of the machines in https://github.com/ThonyPrice/nix-config
+- One or more host machines with static IP addresses, in my case
+  - ~192.168.1.101~: homelab-0
+  - ~192.168.1.102~: homelab-1
+- A passwordless SSH key, in my case ~homelab-thony~
+
+** 0. Sops Nix
+
+[[https://github.com/Mic92/sops-nix][Sops Nix]] is used for declarative and reproducible secret provisioning.
+Since the clustr nodes run NixOS, the Nix version of Sops is simple to intergate.
+
+1. Generate Sops key:
+#+BEGIN_SRC sh
+mkdir -p ~/.config/sops/age
+nix-shell -p ssh-to-age --run "ssh-to-age -private-key -i ~/.ssh/homelab-thony > ~/.config/sops/age/keys.txt"
+#+END_SRC
+2. [@2] Get age public key to insert into ~homelab/.sops.yaml~:
+#+BEGIN_SRC sh
+age-keygen -y ~/.config/sops/age/keys.txt
+#+END_SRC
+3. [@3] Add the key to ~.sops.yaml~
+4. Generate k3s secret, this token will be used by nodes to join the Kubernetes cluster:
+#+BEGIN_SRC sh
+nix-shell -p openssl --run "openssl rand -base64 64"
+#+END_SRC
+5. [@5] Open secrets file with the following command and then add the token:
+#+BEGIN_SRC sh
+nix-shell -p sops --run "sops secrets/secrets.yaml"
+#+END_SRC
+
+** 1. Deploy NixOS Nodes
+
+Currently, I run a two node cluster where each node runs NixOS.
+
+I use [[https://github.com/nix-community/nixos-anywhere/tree/main][nixos-anywhere]] to provision NixOS on the host machines.
+I followed the  nixos-anywhere [[https://github.com/nix-community/nixos-anywhere/blob/main/docs/quickstart.md][quickstart guide]] to derive my initial config which has then been extended over time.
+The prerequisites are strictly inherited from ~nixos-anywhere~ so refer to its [[https://github.com/nix-community/nixos-anywhere/tree/main?tab=readme-ov-file#prerequisites][documentation]] for more details.
+
+Before venturing further, notice the user and SSH key in ~homelab/hosts/configuration.nix~ that you might want to replace with your own values.
+This also goes for the drive partitioning in ~homelab/hosts/disko-config.nix~
+
+*N.B:* Currently the NixOS installations and k3s cluster init needs to be carried out in two steps.
+/Comment out/ the k3s service from ~configuration.nix~ until the README tells you to uncomment it!
+
+*** Bootstrapping - Node 1
+
+To provision the first node with NixOS, run:
+#+BEGIN_SRC sh
+nix run github:nix-community/nixos-anywhere -- \
+    --generate-hardware-config nixos-generate-config ./hosts/hardware-configuration.nix \
+    --flake ./hosts#homelab-0 nixos@192.168.1.101
+#+END_SRC
+
+It /will/ fail once with an error like
+#+BEGIN_SRC sh
+error: getting status of '/nix/store/fl4s59q-source/hosts/hardware-configuration.nix': No such file or directory
+#+END_SRC
+keep calm and just ~git add ./hosts/harware-configuration.nix~.
+The generated file needs to be checked in to complete the flake requirements.
+Then, repeat the ~nix run~ command above.
+
+**** SSH Access Issues?
+
+When connecting to the node over SSH the first time you may run into:
+#+BEGIN_SRC sh
+$ ssh -i ~/.ssh/homelab-thony root@homelab-0
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+...
+#+END_SRC
+
+It's fine, just reset host with ~ssh-keygen -R homelab-0~ to resolve it.
+
+*** Provision More Nodes
+
+Any additional node /i/ where /i/ in /{2,...,N}/:
+#+BEGIN_SRC sh
+nix run github:nix-community/nixos-anywhere -- \
+    --flake ./hosts#homelab-<i> nixos@192.168.1.10<i>
+#+END_SRC
+
+*** Manage Nodes
+
+Post bootstrapping, any changes to a node /i/ will be applied by:
+#+BEGIN_SRC sh
+nixos-rebuild switch --flake ./hosts#homelab-<i> --target-host root@homelab-<i>
+#+END_SRC
+
+** 2. Deploy k3s Cluster
+
+Now, some steps that are not very declarative yet required until I make a better setup:
+1. Copy /private/ sops key to nodes to enable Sops decryption ~scp ~/.ssh/homelab-thony root@homelab-<i>:/etc/ssh/homelab-<i>~
+2. Comment /in/ the k3s cluster definition that you commented /out/ first thing in /"1. Deploy NixOS Nodes"/
+3. For every node /i/, rebuild with ~nixos-rebuild switch --flake ./hosts#homelab-<i> --target-host root@homelab-<i>~
+4. Et voilá! The nodes are running a k3s cluster!
+
+Now, getting the kube config to interact with the cluster is a simple two step process:
+1. Get kubeconfig and replace localhost with actual domain for one cluster node:
+#+BEGIN_SRC sh
+mkdir -p ~/.kube
+scp root@homelab-0:/etc/rancher/k3s/k3s.yaml ~/.kube/config
+sed -i -e 's/127.0.0.1/homelab-0/g' ~/.kube/config
+#+END_SRC
+2. [@2] Validate cluster nodes are reachable and healthy:
+#+BEGIN_SRC sh
+kubectl get nodes
+#+END_SRC
+
+** 3. Install Cluster Services
+
+This step bootstraps the Kubernetes cluster and roll out all services defined in ~homelab/cluster/argocd-apps~:
+
+*** Boostrap
+
+1. Install External Secrets chart, see installation process in ~homelab/cluster/external-secrets~.
+   This sets the cluster up to pull secrets from GCP secret manager.
+2. Install ArgoCD, see ~homelab/cluster/argocd~.
+   This manually installs ArgoCD wich enables pulling all Kubernetes manifests from a git repo, like this one :)
+3. Rollout an ArgoCD app that define the app itself, and the external secrets chart /and *all* other apps/ that should run in the cluster!
+   That is it, now all Kubernetes manifests are manged by changes in this repo.

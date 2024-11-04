@@ -1,0 +1,10 @@
+#+title: ArgoCD Apps
+
+* About
+
+Defines all the apps managed by ArgoCD.
+This includes everything running in the cluster.
+
+* Setup
+
+These apps are rolled out as a part of installing ArgoCD, see ~homelab/cluster/argocd~.

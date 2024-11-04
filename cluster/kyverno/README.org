@@ -1,0 +1,13 @@
+#+title: Kyverno
+
+* About
+
+Kyverno is a policy engine designed for Kubernetes.
+Currently, I only run it to provide a fix for longhorn on NixOS...
+
+Background: https://github.com/NixOS/nixpkgs/blob/master/pkgs/applications/networking/cluster/k3s/docs/examples/STORAGE.md
+
+* Setup
+
+This kustomization is a small addition to the Kyverno Helm chart defined in ArgoCD apps.
+See ~homelab/cluster/argocd-apps/kyverno.yaml~.

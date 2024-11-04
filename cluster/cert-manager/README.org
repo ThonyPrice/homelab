@@ -1,0 +1,18 @@
+#+title: Cert-Manager
+
+* About
+
+cert-manager adds certificates and certificate issuers as resource types in Kubernetes clusters, and simplifies the process of obtaining, renewing and using those certificates.
+
+I use it to get and update TLS certificates for domains served in the cluster.
+
+* Setup
+
+The chart followed the standard Helm chart setup:
+
+1. Define details in ~Chart.yaml~
+2. Pull upstream chart by ~helm dependency build~
+
+Additionally, these steps was carried out to adapt the chart:
+1. Create CF token and issues according to instructions at https://cert-manager.io/docs/configuration/acme/dns01/cloudflare/
+2. Made the issuers cluster wide to avoid reproducing same issuer in evert namespace, see ~ClusterIssuer~ scope in https://cert-manager.io/v1.5-docs/faq/cluster-resource/
